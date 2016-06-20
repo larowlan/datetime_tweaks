@@ -1,0 +1,8 @@
+name: Datetime tweaks
+type: module
+description: Tweaks for datetime module
+core: 8.x
+package: Field types
+version: VERSION
+dependencies:
+  - datetime

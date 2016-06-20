@@ -1,0 +1,8 @@
+default_date:
+  version: VERSION
+  js:
+    js/defaultDate.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupalSettings

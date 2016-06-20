@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @file
+ * Main module functions.
+ */
+
+use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Datetime\Element\Datetime;
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function datetime_tweaks_element_info_alter(array &$types) {
+  $types['datetime']['#value_callback'] = 'datetime_tweaks_datetime_value';
+  $types['datetime']['#process'][] = 'datetime_tweaks_datetime_set_format';
+}
+
+/**
+ * Element process callback for datetime fields.
+ */
+function datetime_tweaks_datetime_set_format($element) {
+  // Use d/m/Y format.
+  $element['date']['#attributes']['data-drupal-date-format'] = ['d/m/Y'];
+  $element['date']['#date_date_format'] = 'd/m/Y';
+  $element['date']['#attributes']['title'] = t('Enter a valid date - e.g. @format', [
+    '@format' => (new \DateTime())->format('d/m/Y'),
+  ]);
+  $element['time']['#attributes']['title'] = t('Enter a valid time - e.g. @format', [
+    '@format' => (new \DateTime())->format('h:i'),
+  ]);
+  // Remove seconds in browsers that support HTML5 type=date.
+  $element['time']['#attributes']['step'] = 60;
+  $element['#attached']['library'][] = 'datetime_tweaks/default_date';
+  return $element;
+}
+
+/**
+ * Element validate callback for browsers that don't support HTML5 type=date.
+ */
+function datetime_tweaks_datetime_value(&$element, $input, FormStateInterface $form_state) {
+  if ($input !== FALSE) {
+    try {
+      if ($date = DrupalDateTime::createFromFormat('d/m/Y', $input['date'], !empty($element['#date_timezone']) ? $element['#date_timezone'] : NULL)) {
+        // Core expects incoming values in Y-m-d format for HTML5 date elements.
+        $input['date'] = $date->format('Y-m-d');
+      }
+    }
+    catch (\Exception $e) {
+      // Date is not in d/m/Y format - nothing to do.
+    }
+  }
+  return Datetime::valueCallback($element, $input, $form_state);
+}
