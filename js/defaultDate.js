@@ -15,13 +15,23 @@
         return;
       }
       $context.find('input[data-drupal-date-format]').once('default-date').each(function () {
-        var $el = $(this);
+        var $el = $(this), parts;
         var val = $el.val();
-        // If default date is in Y-m-d format, switch to d/m/Y for browsers
-        // that don't support html5 date format.
-        if (val.match(/[0-9]{4}-[0-9]{2}-[0-9]{2}/)) {
-          var parts = val.split('-');
+        var regexp = /[0-9]{4}-[0-9]{2}-[0-9]{2}/;
+        if (val.match(regexp)) {
+          parts = val.split('-');
           $el.val(parts[2] + '/' + parts[1] + '/' + parts[0]);
+        }
+        var attributes = ['min', 'max'], i, field;
+        for (i in attributes) {
+          if (attributes.hasOwnProperty(i)) {
+            field = attributes[i];
+            val = $el.attr(field);
+            if (val && val.match(regexp)) {
+              parts = val.split('-');
+              $el.attr(field, parts[2] + '/' + parts[1] + '/' + parts[0]);
+            }
+          }
         }
       });
     }
