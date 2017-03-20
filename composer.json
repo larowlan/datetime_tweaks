@@ -1,0 +1,6 @@
+{
+  "name": "drupal/datetime_tweaks",
+  "description": "Making Drupal 8 datetime widgets use human formats.",
+  "type": "drupal-module",
+  "license": "GPL-2.0+"
+}
