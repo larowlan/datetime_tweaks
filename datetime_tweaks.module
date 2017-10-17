@@ -40,7 +40,7 @@ function datetime_tweaks_datetime_set_format($element) {
  * Element validate callback for browsers that don't support HTML5 type=date.
  */
 function datetime_tweaks_datetime_value(&$element, $input, FormStateInterface $form_state) {
-  if ($input !== FALSE) {
+  if ($input !== FALSE && isset($input['date'])) {
     try {
       if ($date = DrupalDateTime::createFromFormat('d/m/Y', $input['date'], !empty($element['#date_timezone']) ? $element['#date_timezone'] : NULL)) {
         // Core expects incoming values in Y-m-d format for HTML5 date elements.
